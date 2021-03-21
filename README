@@ -1,4 +1,4 @@
-# py_exp
+# aerial_image_stitching_pkg
 
 # MAVROS-ARDUPILOT communication test
 
@@ -16,21 +16,6 @@
 
 -> image_pub.py : to publish the images read from a directory along with pose to a topic
 -> super_stitch.py : to stitch the images published on the topic
-
-# AIRSIM data generation
-
--> multi_drone.py : to follow a path and save images to a directory
--> cap_multi.py : to save images coming from multiple UAVs alongwith pose to a directory
-
-# PLOTTING
-
--> overlap_plot.py : to plot the overlapping regions in a image stitching scenario
--> plot.py : to plot the path taken by muliple robots
-
-# SMT
-
--> smt.py : to output a optimized path for area coverage using smt
--> incremental_smt.py : to solve the coverage incrementally and plot it
 
 # REAL-TIME video capturing
 
