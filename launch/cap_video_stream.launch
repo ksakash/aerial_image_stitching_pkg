@@ -1,0 +1,8 @@
+<launch>
+    <param name="file_name" type="string"
+        value="$(find aerial_image_stitching_pkg)/data/videoStreamImages.txt" />
+    <param name="image_dir" type="string"
+        value="$(find aerial_image_stitching_pkg)/data/video_stream" />
+    <node pkg="aerial_image_stitching_pkg" type="cap_video_stream.py"
+        name="cap_video_stream" output="screen" />
+</launch>
