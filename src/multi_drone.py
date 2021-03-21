@@ -17,7 +17,7 @@ clients = []
 intial_pos = [(0, 0), (1, 0), (0, 1), (1, 1)]
 real_init_pos = [(0, 0), (5, 0)]
 
-image_filename = 'airsimImage.txt'
+image_filename = '../data/airsimImage.txt'
 file_handle = open (image_filename, 'w+')
 
 for id in robots:
@@ -131,7 +131,7 @@ def perform_course (tmp_dir):
             count += 1
             image_count += 1
 
-tmp_dir = "airsim_images"
+tmp_dir = "../data/airsim_images"
 print ("Saving images to %s" % tmp_dir)
 try:
     os.makedirs(tmp_dir)

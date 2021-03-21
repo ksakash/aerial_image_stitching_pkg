@@ -14,7 +14,7 @@ count = 0
 
 offset = [-40, -50, 0]
 
-data_filename = 'imageData.txt'
+data_filename = '../data/imageData.txt'
 fhandle = open (data_filename, 'w+')
 
 yaw = 0
@@ -56,7 +56,7 @@ def callback (data):
     #cv2.waitKey (3)
 
     if (count % 40 == 0):
-        filename = 'images/' + str (count) + '.jpg'
+        filename = '../data/images/' + str (count) + '.jpg'
         cv2.imwrite (filename, cv_image)
         global fhandle
         st = (os.path.basename(filename)) + "," + '%.3f'%lon + "," + \

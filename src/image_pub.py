@@ -17,8 +17,8 @@ if __name__ == '__main__':
 
     pub = rospy.Publisher ("/image_pose", ImagePose, queue_size=5, latch=True)
 
-    dirname = '/home/ksakash/misc/aerial_image_stitching/airsim_images'
-    filename = '/home/ksakash/misc/aerial_image_stitching/airsimImage.txt'
+    dirname = '/home/ksakash/misc/stitch_ws/src/aerial_image_stitching/data/airsim_images'
+    filename = '/home/ksakash/misc/stitch_ws/src/aerial_image_stitching/data/airsimImage.txt'
     bridge = CvBridge ()
 
     data_matrix = np.genfromtxt (filename, delimiter=",", usecols=range(1, 7), dtype=float)

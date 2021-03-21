@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import setup_path 
+import setup_path
 import airsim
 
 import numpy as np
@@ -12,12 +12,12 @@ import cv2
 import time
 from squaternion import Quaternion
 
-image_filename = 'airsimImage.txt'
+image_filename = '../data/airsimImage.txt'
 file_handle = open (image_filename, 'w+')
 
 def save_imu_pose (client, filename):
     filename = filename + '.jpg'
-    
+
     imu_data = client.getImuData ()
     state = client.getMultirotorState ()
 
@@ -25,7 +25,7 @@ def save_imu_pose (client, filename):
     lat = state.kinematics_estimated.position.y_val
     alt = state.kinematics_estimated.position.z_val
 
-    w = imu_data.orientation.w_val 
+    w = imu_data.orientation.w_val
     x = imu_data.orientation.x_val
     y = imu_data.orientation.y_val
     z = imu_data.orientation.z_val
@@ -67,7 +67,7 @@ def save_image (client, tmp_dir, count):
 client = airsim.MultirotorClient()
 client.confirmConnection()
 
-tmp_dir = "airsim_images"
+tmp_dir = "../data/airsim_images"
 print ("Saving images to %s" % tmp_dir)
 try:
     os.makedirs(tmp_dir)

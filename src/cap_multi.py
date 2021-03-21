@@ -16,7 +16,7 @@ vehicles = [0, 1]
 
 initial_pos = [(0, 0), (5, 0)]
 
-image_filename = 'airsimImage.txt'
+image_filename = '../data/airsimImage.txt'
 file_handle = open (image_filename, 'w+')
 
 def save_imu_pose (client, filename, id):
@@ -72,7 +72,7 @@ def save_image (client, tmp_dir, count, id):
 client = airsim.MultirotorClient()
 client.confirmConnection()
 
-tmp_dir = "airsim_images"
+tmp_dir = "../data/airsim_images"
 print ("Saving images to %s" % tmp_dir)
 try:
     os.makedirs(tmp_dir)

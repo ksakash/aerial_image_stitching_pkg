@@ -24,7 +24,7 @@ y_arr = []
 
 for r in range (R):
     # filename = 'robot' + str (r) + '.plan'
-    filename = 'waypoints_' + str (r)
+    filename = '../plans/waypoints_' + str (r)
     (x, y) = readInput (filename)
     x_arr.append (x)
     y_arr.append (y)

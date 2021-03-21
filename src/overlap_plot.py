@@ -17,16 +17,16 @@ def readInput (filename):
 
     return arr
 
-filename = 'waypoints_0'
+filename = '../plans/waypoints_0'
 points = readInput (filename)
 
-filename = 'waypoints_1'
+filename = '../plans/waypoints_1'
 points1 = readInput (filename)
 
-filename = 'waypoints_2'
+filename = '../plans/waypoints_2'
 points2 = readInput (filename)
 
-filename = 'waypoints_3'
+filename = '../plans/waypoints_3'
 points3 = readInput (filename)
 
 h = 2

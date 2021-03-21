@@ -8,7 +8,7 @@ import time
 from squaternion import Quaternion
 from cv_bridge import CvBridge, CvBridgeError
 
-f = open ('videoStreamImages.txt', 'w+')
+f = open ('../data/videoStreamImages.txt', 'w+')
 count = 0
 bridge = CvBridge ()
 
@@ -43,7 +43,7 @@ def cb (data):
     cv2.imwrite ('video_stream/' + str (count) + '.jpg', curr_img)
     count += 1
 
-rospy.init_node ('cap_video_stream')
+rospy.init_node ('../data/cap_video_stream')
 sub = rospy.Subscriber ('/image_pose', ImagePose, cb)
 
 rospy.spin ()
