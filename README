@@ -1,0 +1,39 @@
+# py_exp
+
+# MAVROS-ARDUPILOT communication test
+
+-> arm_test.py : tests whether the arm command is working properly or not
+-> takeoff_test.py : to test if the vehicle motion controls are stable
+-> offboard_test.py : to give a waypoint and see if the GUIDED mode is working properly
+
+# REAL-TIME image stitching
+
+-> geotag.py : to adjust for the lag that comes through video stream
+-> video_capture.py : publish the video stream with synced odometry data from geotag
+-> super_stitch.py : to stitch the images coming in
+
+# SIMULATING REAL-TIME image stitching
+
+-> image_pub.py : to publish the images read from a directory along with pose to a topic
+-> super_stitch.py : to stitch the images published on the topic
+
+# AIRSIM data generation
+
+-> multi_drone.py : to follow a path and save images to a directory
+-> cap_multi.py : to save images coming from multiple UAVs alongwith pose to a directory
+
+# PLOTTING
+
+-> overlap_plot.py : to plot the overlapping regions in a image stitching scenario
+-> plot.py : to plot the path taken by muliple robots
+
+# SMT
+
+-> smt.py : to output a optimized path for area coverage using smt
+-> incremental_smt.py : to solve the coverage incrementally and plot it
+
+# REAL-TIME video capturing
+
+-> video_capture.py : to capture video from herelink and publish it on a ros topic
+-> geotag.py : to sync the odometry data with video images
+-> cap_video_stream.py : to save all the images from video stream with the odom values
