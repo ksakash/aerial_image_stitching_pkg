@@ -6,7 +6,7 @@ import rospy
 import time
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseStamped
-from laser_pkg.msg import ImagePose
+from aerial_image_stitching_pkg.msg import ImagePose
 from cv_bridge import CvBridge, CvBridgeError
 
 pose = PoseStamped ()

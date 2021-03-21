@@ -6,7 +6,7 @@ import rospy
 import time
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseStamped
-from laser_pkg.msg import ImagePose
+from aerial_image_stitching_pkg.msg import ImagePose
 from collections import deque
 
 pose0 = PoseStamped ()

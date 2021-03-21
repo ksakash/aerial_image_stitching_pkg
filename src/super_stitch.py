@@ -12,7 +12,7 @@ import JPEGEncoder as en
 from cv_bridge import CvBridge, CvBridgeError
 from geometry_msgs.msg import Pose, PoseStamped
 from sensor_msgs.msg import Image as ROSImage
-from laser_pkg.msg import ImagePose
+from aerial_image_stitching_pkg.msg import ImagePose
 from squaternion import Quaternion
 
 from image import Image

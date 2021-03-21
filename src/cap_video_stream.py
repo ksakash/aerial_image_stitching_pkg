@@ -1,5 +1,5 @@
 import rospy
-from laser_pkg.msg import ImagePose
+from aerial_image_stitching_pkg.msg import ImagePose
 import numpy as np
 
 import cv2
