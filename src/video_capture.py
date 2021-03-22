@@ -17,7 +17,7 @@ def cb (data):
 
 rospy.init_node ('video_capture')
 pub = rospy.Publisher ('/image_pose', ImagePose, queue_size=50, latch=True)
-sub = rospy.Subscriber ('/mavros/global_position/local/adjusted', Odometry, cb, queue_size=10)
+sub = rospy.Subscriber ('mavros/global_position/local/adjusted', Odometry, cb, queue_size=10)
 
 url = "rtsp://192.168.43.1:8554/fpv_stream"
 cap = cv2.VideoCapture (url)

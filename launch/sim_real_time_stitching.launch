@@ -1,0 +1,9 @@
+<launch>
+    <arg name="file_name" default="$(find aerial_image_stitching_pkg)/data/videoStreamImages.txt" />
+    <arg name="image_dir" default="$(find aerial_image_stitching_pkg)/data/video_stream" />
+    <include file="$(find aerial_image_stitching_pkg)/launch/image_pub.launch">
+        <arg name="file_name" value="$(arg file_name)" />
+        <arg name="image_dir" value="$(arg image_dir)" />
+    </include>
+    <node pkg="aerial_image_stitching_pkg" type="super_stitch.py" name="super_stitch" />
+</launch>

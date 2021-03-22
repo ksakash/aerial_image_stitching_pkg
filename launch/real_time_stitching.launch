@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="aerial_image_stitching_pkg" type="geotag.py" name="geotag" />
+    <node pkg="aerial_image_stitching_pkg" type="video_capture.py" name="video_capture" />
+    <node pkg="aerial_image_stitching_pkg" type="super_stitch.py" name="super_stitch" />
+</launch>
