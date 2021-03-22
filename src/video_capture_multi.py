@@ -67,43 +67,58 @@ if (cap3.isOpened () == False):
 
 image_de = deque ()
 queue_len = 50
+count = 0
 
 while (cap0.isOpened() or cap1.isOpened() or cap2.isOpened() or \
        cap3.isOpened()):
     ret, frame = cap0.read ()
     if ret:
-        image_de.append (frame)
-        if len (image_de) > queue_len:
-            image_de.popleft ()
+        if (count % 60 == 0):
+            image_de.append (frame)
+            if len (image_de) > queue_len:
+                image_de.popleft ()
+    else:
+        break
     ret, frame = cap1.read ()
     if ret:
-        image_de.append (frame)
-        if len (image_de) > queue_len:
-            image_de.popleft ()
+        if (count % 60 == 0):
+            image_de.append (frame)
+            if len (image_de) > queue_len:
+                image_de.popleft ()
+    else:
+        break
     ret, frame = cap2.read ()
     if ret:
-        image_de.append (frame)
-        if len (image_de) > queue_len:
-            image_de.popleft ()
+        if (count % 60 == 0):
+            image_de.append (frame)
+            if len (image_de) > queue_len:
+                image_de.popleft ()
+    else:
+        break
     ret, frame = cap3.read ()
     if ret:
-        image_de.append (frame)
-        if len (image_de) > queue_len:
-            image_de.popleft ()
+        if (count % 60 == 0):
+            image_de.append (frame)
+            if len (image_de) > queue_len:
+                image_de.popleft ()
+    else:
+        break
 
     if len (image_de) == 0:
         break
 
-    frame = image_de.popleft ()
-    image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
-    msg = ImagePose ()
-    msg.pose = pose
-    msg.image = image
-    pub.publish (msg)
-    time.sleep (3)
+    if (count % 60 == 0):
+        frame = image_de.popleft ()
+        image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
+        msg = ImagePose ()
+        msg.pose = pose
+        msg.image = image
+        pub.publish (msg)
 
     if (cv2.waitKey (25) & 0xFF == ord ('q')):
         break
+
+    count += 1
 
 cap.release ()
 cv2.destroyAllWindows ()

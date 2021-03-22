@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+import os
 import rospy
 from aerial_image_stitching_pkg.msg import ImagePose
 import numpy as np
@@ -38,7 +41,7 @@ def cb (data):
     pitch = float (e[1])
     yaw = float (e[2])
 
-    st = (os.path.basename(filename)) + "," + '%.3f'%lon + "," + \
+    st = str (count) + ".jpg" + "," + '%.3f'%lon + "," + \
         '%.3f'%lat + "," + '%.3f'%alt + "," + \
         '%.3f'%yaw + "," + '%.3f'%pitch + "," + \
         '%.3f'%roll + "\n"
@@ -47,6 +50,6 @@ def cb (data):
     cv2.imwrite (dirname + '/' + str (count) + '.jpg', curr_img)
     count += 1
 
-sub = rospy.Subscriber ('/image_pose', ImagePose, cb)
+sub = rospy.Subscriber ('/image_pose', ImagePose, cb, queue_size=1)
 
 rospy.spin ()

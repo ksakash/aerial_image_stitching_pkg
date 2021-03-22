@@ -15,11 +15,11 @@ from cv_bridge import CvBridge, CvBridgeError
 if __name__ == '__main__':
     rospy.init_node ('image_pose_pub', anonymous=True)
 
-    pub = rospy.Publisher ("/image_pose", ImagePose, queue_size=5, latch=True)
+    pub = rospy.Publisher ("/image_pose", ImagePose, queue_size=1, latch=True)
 
-    dirname = '/home/ksakash/misc/stitch_ws/src/aerial_image_stitching/data/airsim_images'
+    dirname = '/home/ksakash/misc/stitch_ws/src/aerial_image_stitching/data/video_stream'
     dirname = rospy.get_param ("image_dir", dirname)
-    filename = '/home/ksakash/misc/stitch_ws/src/aerial_image_stitching/data/airsimImage.txt'
+    filename = '/home/ksakash/misc/stitch_ws/src/aerial_image_stitching/data/videoStreamImages.txt'
     filename = rospy.get_param ("file_name", filename)
     bridge = CvBridge ()
 
@@ -35,7 +35,10 @@ if __name__ == '__main__':
 
         image_name = image_name_matrix[count]
         image_path = dirname + '/' + image_name
+        print (image_name)
+        print (image_path)
         img = cv2.imread (image_path)
+        print (img.shape)
         image = bridge.cv2_to_imgmsg (img, encoding="bgr8")
 
         msg = ImagePose ()
@@ -45,4 +48,4 @@ if __name__ == '__main__':
         pub.publish (msg)
 
         count += 1
-        time.sleep (4.0)
+        time.sleep (3.0)

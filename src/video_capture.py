@@ -16,7 +16,7 @@ def cb (data):
     pose.pose = data.pose.pose
 
 rospy.init_node ('video_capture')
-pub = rospy.Publisher ('/image_pose', ImagePose, queue_size=50, latch=True)
+pub = rospy.Publisher ('/image_pose', ImagePose, queue_size=1, latch=True)
 sub = rospy.Subscriber ('mavros/global_position/local/adjusted', Odometry, cb, queue_size=10)
 
 url = "rtsp://192.168.43.1:8554/fpv_stream"
@@ -26,20 +26,24 @@ bridge = CvBridge ()
 if (cap.isOpened () == False):
     print ("error in opening video stream")
 
-while (cap.isOpened()):
+count = 0
+then = time.time ()
+while (cap.isOpened() and not rospy.is_shutdown ()):
     ret, frame = cap.read ()
     if (ret == True):
-        cv2.imshow ('Frame', frame)
-        image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
-        msg = ImagePose ()
-        msg.pose = pose
-        msg.image = image
-        pub.publish (msg)
-        time.sleep (4)
-        if (cv2.waitKey (25) & 0xFF == ord ('q')):
-            break
+        if (count % 60 == 0):
+            now = time.time ()
+            then = now
+            image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
+            msg = ImagePose ()
+            msg.pose = pose
+            msg.image = image
+            pub.publish (msg)
+            if (cv2.waitKey (25) & 0xFF == ord ('q')):
+                break
     else:
         break
+    count += 1
 
 cap.release ()
 cv2.destroyAllWindows ()
