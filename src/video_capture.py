@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import rospy
 import time
+import copy
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseStamped
 from aerial_image_stitching_pkg.msg import ImagePose
@@ -28,13 +29,16 @@ if (cap.isOpened () == False):
 
 count = 0
 then = time.time ()
+offset = 400
+
 while (cap.isOpened() and not rospy.is_shutdown ()):
     ret, frame = cap.read ()
     if (ret == True):
         if (count % 60 == 0):
             now = time.time ()
             then = now
-            image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
+            cropped = copy.copy (frame[:,offset:,:])
+            image = bridge.cv2_to_imgmsg (cropped, encoding="bgr8")
             msg = ImagePose ()
             msg.pose = pose
             msg.image = image
