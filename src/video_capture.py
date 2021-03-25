@@ -29,15 +29,18 @@ if (cap.isOpened () == False):
 
 count = 0
 then = time.time ()
-offset = 400
+offset = 240
+width = 1920
 
 while (cap.isOpened() and not rospy.is_shutdown ()):
     ret, frame = cap.read ()
     if (ret == True):
-        if (count % 60 == 0):
+        if (count % 50 == 0):
             now = time.time ()
             then = now
-            cropped = copy.copy (frame[:,offset:,:])
+            cropped = copy.copy (frame[:,offset:width-offset,:])
+            cropped = cv2.rotate (cropped, cv2.ROTATE_90_CLOCKWISE)
+            print (cropped.shape)
             image = bridge.cv2_to_imgmsg (cropped, encoding="bgr8")
             msg = ImagePose ()
             msg.pose = pose

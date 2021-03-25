@@ -35,7 +35,7 @@ class ImageStitch (object):
         self.matcher = cv2.FlannBasedMatcher ()
         self.height = 25
         self.count = 0
-        self.dimensions = (1920, 1080)
+        self.dimensions = (1440, 1080)
         self.scale = 1
         self.mesh_size = 50
 
@@ -51,6 +51,9 @@ class ImageStitch (object):
         self.transformation_series = []
         self.position_data = []
 
+        self.result_dir = "/home/ksakash/misc/stitch_ws/src/aerial_image_stitching/data/temp"
+        self.result_dir = rospy.get_param ("result_dir", self.result_dir)
+
     def get_transformation (self, id):
         trans = self.imageDataList[id]._transformation
         for i in range (id, len (self.transformation_series)):
@@ -63,6 +66,9 @@ class ImageStitch (object):
 
         h = self.height
         w = 0.5 * h
+
+        # w = self.height
+        # h = 0.75 * w
 
         dist = []
         for p in self.position_data:
@@ -91,7 +97,7 @@ class ImageStitch (object):
         total = np.union1d (totalx, totaly)
 
         if total.shape[0] == 0:
-            total = np.array ([j-1])
+            total = np.array ([id-1])
         return total
 
     def pose_cb (self, data):
@@ -237,8 +243,13 @@ class ImageStitch (object):
                 good.append(m)
         print (str (len (good)) + " Matches were Found")
 
-        if (len (good)) <= 100:
-            self.low_matches_handler (image, pose)
+        if (len (good)) <= 50:
+            # self.low_matches_handler (image, pose)
+            self.imageDataList[im._id]._is_attached = False
+            self.imageDataList[im._id].set_transformation (np.identity (3))
+            self.transformation_series.append (np.identity (3))
+            self.position_data.append (im._pose[:3])
+            continue
 
         matches = copy.copy (good)
 
@@ -283,7 +294,7 @@ class ImageStitch (object):
         self.transformation_series.append (translation)
         # self.imageDataList.append (im)
         self.position_data.append (im._pose[:3])
-        cv2.imwrite ('temp/finalImage' + str (self.count) + '.jpg', self.result)
+        cv2.imwrite (self.result_dir + '/finalImage' + str (self.count) + '.jpg', self.result)
         self.count += 1
 
         return

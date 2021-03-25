@@ -1,7 +1,7 @@
 <launch>
-    <arg name="file_name" default="$(find aerial_image_stitching_pkg)/data/videoStreamImages.txt" />
-    <arg name="image_dir" default="$(find aerial_image_stitching_pkg)/data/video_stream" />
+    <arg name="file_name" default="$(find aerial_image_stitching_pkg)/data/video_stream1/videoStreamImages.txt" />
+    <arg name="image_dir" default="$(find aerial_image_stitching_pkg)/data/video_stream1" />
     <param name="file_name" type="string" value="$(arg file_name)" />
-    <param name="image_dir" type="string" value="$(arg image_dir" />
+    <param name="image_dir" type="string" value="$(arg image_dir)" />
     <node pkg="aerial_image_stitching_pkg" type="image_pub.py" name="image_pub" output="screen" />
 </launch>
