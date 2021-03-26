@@ -12,8 +12,11 @@ from squaternion import Quaternion
 from cv_bridge import CvBridge, CvBridgeError
 
 rospy.init_node ('cap_video_stream')
-filename = rospy.get_param ("file_name", "../data/videoStreamImages.txt")
+filename = rospy.get_param ("file_name", "../data/video_stream/videoStreamImages.txt")
 dirname = rospy.get_param ("image_dir", "../data/video_stream")
+
+if not os.path.isdir (dirname):
+    os.mkdir (dirname)
 
 f = open (filename, 'w+')
 count = 0

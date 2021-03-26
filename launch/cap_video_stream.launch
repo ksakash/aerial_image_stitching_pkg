@@ -1,5 +1,5 @@
 <launch>
-    <arg name="file_name" default="$(find aerial_image_stitching_pkg)/data/videoStreamImages.txt" />
+    <arg name="file_name" default="$(find aerial_image_stitching_pkg)/data/video_stream/videoStreamImages.txt" />
     <arg name="image_dir" default="$(find aerial_image_stitching_pkg)/data/video_stream" />
     <param name="file_name" type="string" value="$(arg file_name)" />
     <param name="image_dir" type="string" value="$(arg image_dir)" />

@@ -64,11 +64,11 @@ class ImageStitch (object):
         x = self.imageDataList[id]._pose[0]
         y = self.imageDataList[id]._pose[1]
 
-        h = self.height
-        w = 0.5 * h
+        # h = self.height
+        # w = 0.5 * h
 
-        # w = self.height
-        # h = 0.75 * w
+        w = self.height
+        h = 0.75 * w
 
         dist = []
         for p in self.position_data:
