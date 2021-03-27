@@ -7,6 +7,7 @@ sys.path.append ('/home/ksakash/projects/APAP-Image-Stitching')
 import cv2
 import copy
 import rospy
+import time
 import numpy as np
 import JPEGEncoder as en
 from cv_bridge import CvBridge, CvBridgeError
@@ -33,11 +34,12 @@ class ImageStitch (object):
         self.init = False
         self.detector = cv2.xfeatures2d.SURF_create (200)
         self.matcher = cv2.FlannBasedMatcher ()
-        self.height = 25
+        self.height = 15
         self.count = 0
         self.dimensions = (1440, 1080)
         self.scale = 1
         self.mesh_size = 50
+        self.use_apap = False
 
         # subscribe to data coming from the quadcopter
         self.pose_sub = rospy.Subscriber ("/pose", PoseStamped, self.pose_cb)
@@ -80,7 +82,7 @@ class ImageStitch (object):
         dist.sort ()
         totalx = np.where (np.logical_and (dist <= h, dist <= h))[0]
         totalx = dist_ind[totalx]
-        totalx = totalx[:3]
+        totalx = totalx[:4]
 
         dist = []
         for p in self.position_data:
@@ -92,7 +94,7 @@ class ImageStitch (object):
         dist.sort ()
         totaly = np.where (np.logical_and (dist <= w, dist <= w))[0]
         totaly = dist_ind[totaly]
-        totaly = totaly[:3]
+        totaly = totaly[:4]
 
         total = np.union1d (totalx, totaly)
 
@@ -142,7 +144,6 @@ class ImageStitch (object):
             temp = [(dst[0][0][0], dst[0][0][1]),(dst[1][0][0], dst[1][0][1]),\
                     (dst[2][0][0], dst[2][0][1]),(dst[3][0][0], dst[3][0][1])]
             mask_corners += temp
-        # print (mask_corners)
         mask_corners = np.array (mask_corners, dtype=np.int32)
         return mask_corners
 
@@ -187,7 +188,8 @@ class ImageStitch (object):
         pitch = float (e[1])
         yaw = float (e[2])
 
-        self.pose = [pos_x, pos_y, pos_z, yaw, roll, pitch]
+        # self.pose = [pos_x, pos_y, pos_z, yaw, roll, pitch]
+        self.pose = [pos_x, pos_y, pos_z, 0, 0, 0]
 
         print ("pose:", self.pose)
         self.combine (curr_img, self.pose)
@@ -210,6 +212,8 @@ class ImageStitch (object):
             self.imageDataList.append (im)
             self.count += 1
             return
+
+        tic = time.time ()
 
         image = en.compress (data)
         M = gm.computeUnRotMatrix (pose)
@@ -249,7 +253,7 @@ class ImageStitch (object):
             self.imageDataList[im._id].set_transformation (np.identity (3))
             self.transformation_series.append (np.identity (3))
             self.position_data.append (im._pose[:3])
-            continue
+            return
 
         matches = copy.copy (good)
 
@@ -266,22 +270,26 @@ class ImageStitch (object):
 
         HomogResult = cv2.findHomography (src_pts,dst_pts,method=cv2.RANSAC)
         H = HomogResult[0]
-        # H = gh
+        H = gh
 
         final_w, final_h, offset_x, offset_y = final_size (image, self.result, H)
         mesh = get_mesh ((final_w, final_h), self.mesh_size + 1)
         vertices = get_vertice ((final_w, final_h), self.mesh_size, (offset_x, offset_y))
 
         stitcher = Apap (0, [final_w, final_h], [offset_x, offset_y], 1)
-        local_homography_im = np.zeros ([final_h, final_w, 3, 3], dtype=np.float)
-        local_homography_im[:,:] = H
-        stitcher.local_homography2 (final_src, final_dst, vertices, local_homography_im)
+        if self.use_apap:
+            local_homography_im = np.zeros ([final_h, final_w, 3, 3], dtype=np.float)
+            local_homography_im[:,:] = H
+            stitcher.local_homography2 (final_src, final_dst, vertices, local_homography_im)
 
         translation = np.float32 (([1,0,offset_x],[0,1,offset_y],[0,0,1]))
         fullTransformation = np.dot (translation, H)
-
         warpedImage = np.zeros ([final_h, final_w, 3], dtype=np.uint8)
-        stitcher.local_warp2 (image, local_homography_im, warpedImage)
+
+        if self.use_apap:
+            stitcher.local_warp2 (image, local_homography_im, warpedImage)
+        else:
+            warpedImage = cv2.warpPerspective(image, fullTransformation, (final_w, final_h))
 
         warpedResImg = cv2.warpPerspective (self.result, translation, (final_w, final_h))
         self.result = np.where (warpedImage != 0, warpedImage, warpedResImg)
@@ -296,6 +304,10 @@ class ImageStitch (object):
         self.position_data.append (im._pose[:3])
         cv2.imwrite (self.result_dir + '/finalImage' + str (self.count) + '.jpg', self.result)
         self.count += 1
+
+        toc = time.time ()
+
+        print ("time taken super stitch:", toc - tic)
 
         return
 

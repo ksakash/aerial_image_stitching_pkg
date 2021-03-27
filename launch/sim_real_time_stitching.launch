@@ -1,6 +1,6 @@
 <launch>
-    <arg name="file_name" default="$(find aerial_image_stitching_pkg)/data/video_stream1/videoStreamImages.txt" />
-    <arg name="image_dir" default="$(find aerial_image_stitching_pkg)/data/video_stream1" />
+    <arg name="file_name" default="$(find aerial_image_stitching_pkg)/data/video_stream9/videoStreamImages.txt" />
+    <arg name="image_dir" default="$(find aerial_image_stitching_pkg)/data/video_stream9" />
     <include file="$(find aerial_image_stitching_pkg)/launch/image_pub.launch">
         <arg name="file_name" value="$(arg file_name)" />
         <arg name="image_dir" value="$(arg image_dir)" />
