@@ -15,7 +15,7 @@ from cv_bridge import CvBridge, CvBridgeError
 if __name__ == '__main__':
     rospy.init_node ('image_pose_pub', anonymous=True)
 
-    pub = rospy.Publisher ("/image_pose", ImagePose, queue_size=1, latch=True)
+    pub = rospy.Publisher ("/image_pose", ImagePose, queue_size=50, latch=True)
 
     dirname = '/home/ksakash/misc/stitch_ws/src/aerial_image_stitching/data/video_stream'
     dirname = rospy.get_param ("image_dir", dirname)
@@ -26,6 +26,7 @@ if __name__ == '__main__':
     data_matrix = np.genfromtxt (filename, delimiter=",", usecols=range(1, 7), dtype=float)
     image_name_matrix = np.genfromtxt (filename, delimiter=",", usecols=[0], dtype=str)
     count = 0
+    time_gap = rospy.get_param ("time_gap", 3.0)
 
     while not rospy.is_shutdown () and count < len (data_matrix):
         pose = PoseStamped ()
@@ -36,9 +37,7 @@ if __name__ == '__main__':
         image_name = image_name_matrix[count]
         image_path = dirname + '/' + image_name
         print (image_name)
-        print (image_path)
         img = cv2.imread (image_path)
-        print (img.shape)
         image = bridge.cv2_to_imgmsg (img, encoding="bgr8")
 
         msg = ImagePose ()
@@ -48,4 +47,4 @@ if __name__ == '__main__':
         pub.publish (msg)
 
         count += 1
-        time.sleep (2.0)
+        time.sleep (time_gap)

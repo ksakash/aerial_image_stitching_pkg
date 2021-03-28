@@ -32,7 +32,7 @@ class ImageStitch (object):
         self.result = None
         self.bridge = CvBridge ()
         self.init = False
-        self.detector = cv2.xfeatures2d.SURF_create (200)
+        self.detector = cv2.xfeatures2d.SURF_create (500)
         self.matcher = cv2.FlannBasedMatcher ()
         self.height = 15
         self.count = 0
@@ -55,6 +55,7 @@ class ImageStitch (object):
 
         self.result_dir = "/home/ksakash/misc/stitch_ws/src/aerial_image_stitching/data/temp"
         self.result_dir = rospy.get_param ("result_dir", self.result_dir)
+        cv2.namedWindow("result", cv2.WINDOW_NORMAL)
 
     def get_transformation (self, id):
         trans = self.imageDataList[id]._transformation
@@ -293,6 +294,11 @@ class ImageStitch (object):
 
         warpedResImg = cv2.warpPerspective (self.result, translation, (final_w, final_h))
         self.result = np.where (warpedImage != 0, warpedImage, warpedResImg)
+
+        imS = cv2.resize (self.result, (1080, 1080))
+        cv2.imshow ("result", imS)
+        if (cv2.waitKey (25) & 0xFF == ord ('q')):
+            return
 
         # im._transformation = fullTransformation
         # im._is_attached = True

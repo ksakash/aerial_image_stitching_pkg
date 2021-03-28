@@ -1,9 +1,11 @@
 <launch>
     <arg name="file_name" default="$(find aerial_image_stitching_pkg)/data/video_stream9/videoStreamImages.txt" />
     <arg name="image_dir" default="$(find aerial_image_stitching_pkg)/data/video_stream9" />
+    <arg name="time_gap" default="3" />
     <include file="$(find aerial_image_stitching_pkg)/launch/image_pub.launch">
         <arg name="file_name" value="$(arg file_name)" />
         <arg name="image_dir" value="$(arg image_dir)" />
+        <arg name="time_gap" value="$(arg time_gap)" />
     </include>
     <param name="result_dir" type="string" value="$(find aerial_image_stitching_pkg)/data/temp" />
     <node pkg="aerial_image_stitching_pkg" type="super_stitch.py" name="super_stitch" output="screen" />

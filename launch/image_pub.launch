@@ -1,7 +1,9 @@
 <launch>
+    <arg name="time_gap" default="3" />
     <arg name="file_name" default="$(find aerial_image_stitching_pkg)/data/video_stream1/videoStreamImages.txt" />
     <arg name="image_dir" default="$(find aerial_image_stitching_pkg)/data/video_stream1" />
     <param name="file_name" type="string" value="$(arg file_name)" />
     <param name="image_dir" type="string" value="$(arg image_dir)" />
+    <param name="time_gap" type="double" value="$(arg time_gap)" />
     <node pkg="aerial_image_stitching_pkg" type="image_pub.py" name="image_pub" output="screen" />
 </launch>
