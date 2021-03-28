@@ -243,11 +243,11 @@ class ImageStitch (object):
 
         good = []
         for m, n in matches:
-            if m.distance < 0.55 * n.distance:
+            if m.distance < 0.75 * n.distance:
                 good.append(m)
         print (str (len (good)) + " Matches were Found")
 
-        if (len (good)) <= 50:
+        if (len (good)) <= 30:
             # self.low_matches_handler (image, pose)
             self.imageDataList[im._id]._is_attached = False
             self.imageDataList[im._id].set_transformation (np.identity (3))

@@ -35,7 +35,7 @@ width = 1920
 while (cap.isOpened() and not rospy.is_shutdown ()):
     ret, frame = cap.read ()
     if (ret == True):
-        if (count % 20 == 0):
+        if (count % 80 == 0):
             now = time.time ()
             then = now
             cropped = copy.copy (frame[:,offset:width-offset,:])
