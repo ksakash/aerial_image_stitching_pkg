@@ -12,10 +12,12 @@ from aerial_image_stitching_pkg.msg import ImagePose
 from cv_bridge import CvBridge, CvBridgeError
 
 pose = PoseStamped ()
+init = False
 
 def cb (data):
-    global pose
+    global pose, init
     pose.pose = data.pose.pose
+    init = True
 
 def show_image_pose (frame, pose):
     cv2.imshow ('frame', frame)
@@ -55,6 +57,11 @@ offset = 240
 width = 1920
 
 sync = rospy.get_param ("sync", False)
+rate = rospy.Rate (20)
+
+while not init and not rospy.is_shutdown ():
+    print ("waiting for odometry")
+    rate.sleep ()
 
 while (cap.isOpened() and not rospy.is_shutdown ()):
     ret, frame = cap.read ()
