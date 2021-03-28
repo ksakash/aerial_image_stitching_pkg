@@ -25,6 +25,10 @@ def show_image_pose (frame, pose):
     if (cv2.waitKey (25) & 0xFF == ord ('q')):
         return False
 
+    posx = pose.pose.position.x
+    posy = pose.pose.position.y
+    posz = pose.pose.position.z
+
     w = pose.pose.orientation.w
     x = pose.pose.orientation.x
     y = pose.pose.orientation.y
@@ -37,6 +41,8 @@ def show_image_pose (frame, pose):
     yaw = float (e[2])
 
     print ("orientation:", roll, pitch, yaw)
+    print ("position:", x, y, z)
+    print ("------------------------------")
 
     return True
 
