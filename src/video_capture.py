@@ -5,6 +5,7 @@ import numpy as np
 import rospy
 import time
 import copy
+from squaternion import Quaternion
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseStamped
 from aerial_image_stitching_pkg.msg import ImagePose
@@ -15,6 +16,27 @@ pose = PoseStamped ()
 def cb (data):
     global pose
     pose.pose = data.pose.pose
+
+def show_image_pose (frame, pose):
+    cv2.imshow ('frame', frame)
+
+    if (cv2.waitKey (25) & 0xFF == ord ('q')):
+        return False
+
+    w = pose.pose.orientation.w
+    x = pose.pose.orientation.x
+    y = pose.pose.orientation.y
+    z = pose.pose.orientation.z
+
+    q = Quaternion (w, x, y, z)
+    e = q.to_euler (degrees=True)
+    roll = float (e[0])
+    pitch = float (e[1])
+    yaw = float (e[2])
+
+    print ("orientation:", roll, pitch, yaw)
+
+    return True
 
 rospy.init_node ('video_capture')
 pub = rospy.Publisher ('/image_pose', ImagePose, queue_size=1, latch=True)
@@ -32,22 +54,23 @@ then = time.time ()
 offset = 240
 width = 1920
 
+sync = rospy.get_param ("sync", False)
+
 while (cap.isOpened() and not rospy.is_shutdown ()):
     ret, frame = cap.read ()
+    if sync and not show_image_pose (frame, pose):
+        break
     if (ret == True):
         if (count % 80 == 0):
             now = time.time ()
             then = now
             cropped = copy.copy (frame[:,offset:width-offset,:])
             cropped = cv2.rotate (cropped, cv2.ROTATE_90_CLOCKWISE)
-            print (cropped.shape)
             image = bridge.cv2_to_imgmsg (cropped, encoding="bgr8")
             msg = ImagePose ()
             msg.pose = pose
             msg.image = image
             pub.publish (msg)
-            if (cv2.waitKey (25) & 0xFF == ord ('q')):
-                break
     else:
         break
     count += 1
