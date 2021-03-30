@@ -41,16 +41,17 @@ def show_image_pose (frame, pose):
     yaw = float (e[2])
 
     print ("orientation:", roll, pitch, yaw)
-    print ("position:", x, y, z)
+    print ("position:", posx, posy, posz)
     print ("------------------------------")
 
     return True
 
 rospy.init_node ('video_capture')
-pub = rospy.Publisher ('/image_pose', ImagePose, queue_size=1, latch=True)
+pub = rospy.Publisher ('/image_pose', ImagePose, queue_size=50, latch=True)
 sub = rospy.Subscriber ('mavros/global_position/local/adjusted', Odometry, cb, queue_size=10)
 
-url = "rtsp://192.168.43.1:8554/fpv_stream"
+# url = "rtsp://192.168.43.1:8554/fpv_stream"
+url = "rtsp://192.168.42.129:8554/fpv_stream"
 cap = cv2.VideoCapture (url)
 bridge = CvBridge ()
 
@@ -74,11 +75,12 @@ while (cap.isOpened() and not rospy.is_shutdown ()):
     if sync and not show_image_pose (frame, pose):
         break
     if (ret == True):
-        if (count % 80 == 0):
+        if (count % 60 == 0):
             now = time.time ()
             then = now
             cropped = copy.copy (frame[:,offset:width-offset,:])
             cropped = cv2.rotate (cropped, cv2.ROTATE_90_CLOCKWISE)
+            print (cropped.shape)
             image = bridge.cv2_to_imgmsg (cropped, encoding="bgr8")
             msg = ImagePose ()
             msg.pose = pose

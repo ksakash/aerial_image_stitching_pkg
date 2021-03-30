@@ -63,9 +63,12 @@ class ImageStitch (object):
             trans = np.dot (trans, self.transformation_series[i])
         return trans
 
-    def get_neighbours (self, id):
-        x = self.imageDataList[id]._pose[0]
-        y = self.imageDataList[id]._pose[1]
+    def get_neighbours (self, id, pose):
+        # x = self.imageDataList[id]._pose[0]
+        # y = self.imageDataList[id]._pose[1]
+
+        x = pose[0]
+        y = pose[0]
 
         # h = self.height
         # w = 0.5 * h
@@ -224,7 +227,7 @@ class ImageStitch (object):
         im._pose = pose
         # self.position_data.append (im._pose[:3])
         self.imageDataList.append (im)
-        total = self.get_neighbours (im._id)
+        total = self.get_neighbours (im._id, im._pose)
         print (self.count, "neighbors:", total)
         mask_corners = self.get_mask_corners (total, im._id)
         mask_re = self.get_mask (mask_corners, self.result.shape[:2])
@@ -250,10 +253,7 @@ class ImageStitch (object):
 
         if (len (good)) <= 30:
             # self.low_matches_handler (image, pose)
-            self.imageDataList[im._id]._is_attached = False
-            self.imageDataList[im._id].set_transformation (np.identity (3))
-            self.transformation_series.append (np.identity (3))
-            self.position_data.append (im._pose[:3])
+            self.imageDataList = self.imageDataList[:-1]
             return
 
         matches = copy.copy (good)

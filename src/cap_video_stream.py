@@ -53,6 +53,6 @@ def cb (data):
     cv2.imwrite (dirname + '/' + str (count) + '.jpg', curr_img)
     count += 1
 
-sub = rospy.Subscriber ('/image_pose', ImagePose, cb, queue_size=1)
+sub = rospy.Subscriber ('/image_pose', ImagePose, cb, queue_size=50)
 
 rospy.spin ()
