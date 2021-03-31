@@ -8,6 +8,7 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseStamped
 from aerial_image_stitching_pkg.msg import ImagePose
 from collections import deque
+from cv_bridge import CvBridge, CvBridgeError
 
 pose0 = PoseStamped ()
 pose1 = PoseStamped ()
@@ -50,8 +51,11 @@ url3 = ""
 
 cap0 = cv2.VideoCapture (url0)
 cap1 = cv2.VideoCapture (url1)
-# cap2 = cv2.VideoCapture (url2)
-# cap3 = cv2.VideoCapture (url3)
+
+'''
+cap2 = cv2.VideoCapture (url2)
+cap3 = cv2.VideoCapture (url3)
+'''
 
 bridge = CvBridge ()
 
@@ -61,85 +65,89 @@ if (cap0.isOpened () == False):
 if (cap1.isOpened () == False):
     print ("error in opening video stream1")
 
-# if (cap2.isOpened () == False):
-#     print ("error in opening video stream2")
+'''
+if (cap2.isOpened () == False):
+    print ("error in opening video stream2")
 
-# if (cap3.isOpened () == False):
-#     print ("error in opening video stream3")
+if (cap3.isOpened () == False):
+    print ("error in opening video stream3")
+'''
 
 image_pose_de = deque ()
 queue_len = 100
 count = 0
+tic = time.time ()
 
 def crop_image (frame):
     frame = frame[:,240:1680,:]
     frame = cv2.rotate (frame, cv2.ROTATE_90_CLOCKWISE)
 
-while (cap0.isOpened() or cap1.isOpened()):
+while (cap0.isOpened() and cap1.isOpened() and not rospy.is_shutdown ()):
     ret, frame = cap0.read ()
-    crop_image (frame)
     if ret:
-        if (count % 70 == 0):
+        if (count % 120 == 0):
+            print ("uav0: pushing")
+            crop_image (frame)
             msg = ImagePose ()
             msg.pose = pose0
             msg.image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
             image_pose_de.append (msg)
             if len (image_pose_de) > queue_len:
                 image_pose_de.popleft ()
-    else:
-        break
 
     ret, frame = cap1.read ()
-    crop_image (frame)
     if ret:
-        if (count % 70 == 0):
+        if (count % 120 == 0):
+            print ("uav1: pushing")
+            crop_image (frame)
             msg = ImagePose ()
             msg.pose = pose1
             msg.image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
             image_pose_de.append (msg)
             if len (image_pose_de) > queue_len:
                 image_pose_de.popleft ()
+
+    '''
+    ret, frame = cap2.read ()
+    crop_image (frame)
+    if ret:
+        if (count % 70 == 0):
+            msg = ImagePose ()
+            msg.pose = pose2
+            msg.image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
+            image_pose_de.append (frame)
+            if len (image_pose_de) > queue_len:
+                image_pose_de.popleft ()
     else:
         break
 
-    # ret, frame = cap2.read ()
-    # crop_image (frame)
-    # if ret:
-    #     if (count % 70 == 0):
-    #         msg = ImagePose ()
-    #         msg.pose = pose2
-    #         msg.image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
-    #         image_pose_de.append (frame)
-    #         if len (image_pose_de) > queue_len:
-    #             image_pose_de.popleft ()
-    # else:
-    #     break
+    ret, frame = cap3.read ()
+    crop_image (frame)
+    if ret:
+        if (count % 60 == 0):
+            msg = ImagePose ()
+            msg.pose = pose3
+            msg.image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
+            image_pose_de.append (frame)
+            if len (image_pose_de) > queue_len:
+                image_pose_de.popleft ()
+    else:
+        break
+    '''
 
-    # ret, frame = cap3.read ()
-    # crop_image (frame)
-    # if ret:
-    #     if (count % 60 == 0):
-    #         msg = ImagePose ()
-    #         msg.pose = pose3
-    #         msg.image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
-    #         image_pose_de.append (frame)
-    #         if len (image_pose_de) > queue_len:
-    #             image_pose_de.popleft ()
-    # else:
-    #     break
-
-    if len (image_pose_de) > 0 and (count % 50 == 0):
+    if len (image_pose_de) > 0 and (count % 80 == 0):
+        print ("debug: publishing")
         msg = image_pose_de.popleft ()
         pub.publish (msg)
-
-    if (cv2.waitKey (25) & 0xFF == ord ('q')):
-        break
 
     count += 1
 
 cap0.release ()
 cap1.release ()
-# cap2.release ()
-# cap3.release ()
+
+'''
+cap2.release ()
+cap3.release ()
+'''
 
 cv2.destroyAllWindows ()

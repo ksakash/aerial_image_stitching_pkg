@@ -50,48 +50,44 @@ rospy.init_node ('video_capture')
 pub = rospy.Publisher ('/image_pose', ImagePose, queue_size=50, latch=True)
 sub = rospy.Subscriber ('mavros/global_position/local/adjusted', Odometry, cb, queue_size=10)
 
-# url = "rtsp://192.168.43.1:8554/fpv_stream"
 url = "rtsp://192.168.42.129:8554/fpv_stream"
 url = rospy.get_param ("url", url)
+id = rospy.get_param ("id", 0)
+uav_name = "UAV" + str (id)
 
 cap = cv2.VideoCapture (url)
 bridge = CvBridge ()
 
 if (cap.isOpened () == False):
-    print ("error in opening video stream")
+    print (uav_name, "error in opening video stream")
 
 count = 0
-then = time.time ()
 offset = 240
 width = 1920
 
 sync = rospy.get_param ("sync", False)
 rate = rospy.Rate (20)
 
-mod = int (rospy.get_param ("/mod", 60))
+mod = int (rospy.get_param ("/mod", 70))
 
 while not init and not rospy.is_shutdown ():
-    print ("waiting for odometry")
+    print (uav_name, "waiting for odometry")
     rate.sleep ()
 
 while (cap.isOpened() and not rospy.is_shutdown ()):
     ret, frame = cap.read ()
     if sync and not show_image_pose (frame, pose):
         break
-    if (ret == True):
+    if not sync and ret:
         if (count % mod == 0):
-            now = time.time ()
-            then = now
             cropped = copy.copy (frame[:,offset:width-offset,:])
             cropped = cv2.rotate (cropped, cv2.ROTATE_90_CLOCKWISE)
-            print (cropped.shape)
+            print (uav_name, cropped.shape)
             image = bridge.cv2_to_imgmsg (cropped, encoding="bgr8")
             msg = ImagePose ()
             msg.pose = pose
             msg.image = image
             pub.publish (msg)
-    else:
-        break
     count += 1
 
 cap.release ()
