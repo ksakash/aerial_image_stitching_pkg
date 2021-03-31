@@ -266,6 +266,12 @@ class ImageStitch (object):
 
         ransac = RANSAC ()
         final_src, final_dst = ransac.thread (src_match, dst_match, 50)
+
+        if final_src.shape[0] <= 30:
+            print ("too few inliers!!")
+            self.imageDataList = self.imageDataList[:-1]
+            return
+
         h_agent = Homography ()
         gh = h_agent.global_homography (final_src, final_dst)
 

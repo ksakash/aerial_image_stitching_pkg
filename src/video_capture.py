@@ -52,6 +52,8 @@ sub = rospy.Subscriber ('mavros/global_position/local/adjusted', Odometry, cb, q
 
 # url = "rtsp://192.168.43.1:8554/fpv_stream"
 url = "rtsp://192.168.42.129:8554/fpv_stream"
+url = rospy.get_param ("url", url)
+
 cap = cv2.VideoCapture (url)
 bridge = CvBridge ()
 
@@ -66,6 +68,8 @@ width = 1920
 sync = rospy.get_param ("sync", False)
 rate = rospy.Rate (20)
 
+mod = int (rospy.get_param ("/mod", 60))
+
 while not init and not rospy.is_shutdown ():
     print ("waiting for odometry")
     rate.sleep ()
@@ -75,7 +79,7 @@ while (cap.isOpened() and not rospy.is_shutdown ()):
     if sync and not show_image_pose (frame, pose):
         break
     if (ret == True):
-        if (count % 60 == 0):
+        if (count % mod == 0):
             now = time.time ()
             then = now
             cropped = copy.copy (frame[:,offset:width-offset,:])

@@ -1,0 +1,37 @@
+<launch>
+    <arg name="file_name" default="$(find aerial_image_stitching_pkg)/data/video_stream/videoStreamImages.txt" />
+    <arg name="image_dir" default="$(find aerial_image_stitching_pkg)/data/video_stream" />
+    <param name="file_name" type="string" value="$(arg file_name)" />
+    <param name="image_dir" type="string" value="$(arg image_dir)" />
+    <param name="sync" type="bool" value="false" />
+    <param name="mod" type="int" value="50" />
+
+    <node pkg="aerial_image_stitching_pkg" type="cap_video_stream.py" name="cap_video_stream" output="screen" />
+
+    <group ns="uav0">
+        <param name="url" type="string" value="rtsp://192.168.43.1:8554/fpv_stream" />
+        <node pkg="aerial_image_stitching_pkg" type="geotag.py" name="geotag" output="screen" />
+        <node pkg="aerial_image_stitching_pkg" type="video_capture.py" name="video_capture" output="screen" />
+    </group>
+
+    <group ns="uav1">
+        <param name="url" type="string" value="rtsp://192.168.42.129:8554/fpv_stream" />
+        <node pkg="aerial_image_stitching_pkg" type="geotag.py" name="geotag" output="screen" />
+        <node pkg="aerial_image_stitching_pkg" type="video_capture.py" name="video_capture" output="screen" />
+    </group>
+
+    <node pkg="aerial_image_stitching_pkg" type="video_capture_multi.py" name="video_capture_multi" output="screen" />
+
+    <!-- <group ns="uav2">
+        <param name="url" type="string" value="" />
+        <node pkg="aerial_image_stitching_pkg" type="geotag.py" name="geotag" output="screen" />
+        <node pkg="aerial_image_stitching_pkg" type="video_capture.py" name="video_capture" output="screen" />
+    </group>
+
+    <group ns="uav3">
+        <param name="url" type="string" value="" />
+        <node pkg="aerial_image_stitching_pkg" type="geotag.py" name="geotag" output="screen" />
+        <node pkg="aerial_image_stitching_pkg" type="video_capture.py" name="video_capture" output="screen" />
+    </group> -->
+
+</launch>
