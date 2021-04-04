@@ -2,10 +2,12 @@
     <param name="sync" type="bool" value="false" />
 
     <group ns="uav0">
+        <param name="id" type="int" value="0" />
         <node pkg="aerial_image_stitching_pkg" type="geotag.py" name="geotag" output="screen" />
     </group>
 
     <group ns="uav1">
+        <param name="id" type="int" value="1" />
         <node pkg="aerial_image_stitching_pkg" type="geotag.py" name="geotag" output="screen" />
     </group>
 

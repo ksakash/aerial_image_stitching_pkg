@@ -6,7 +6,7 @@ import time
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
 
-queue_size = 7
+queue_size = 6
 odometry_de = deque ()
 
 rospy.init_node ('geotagging_images')

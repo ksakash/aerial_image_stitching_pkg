@@ -15,13 +15,18 @@ pose1 = PoseStamped ()
 pose2 = PoseStamped ()
 pose3 = PoseStamped ()
 
+init0 = False
+init1 = False
+
 def cb0 (data):
-    global pose0
+    global pose0, init0
     pose0.pose = data.pose.pose
+    init0 = True
 
 def cb1 (data):
-    global pose1
+    global pose1, init1
     pose1.pose = data.pose.pose
+    init1 = True
 
 def cb2 (data):
     global pose2
@@ -78,6 +83,12 @@ queue_len = 100
 count = 0
 tic = time.time ()
 
+rate = rospy.Rate (20)
+
+while not (init0 and init1) and not rospy.is_shutdown ():
+    print ("waiting for odometry")
+    rate.sleep ()
+
 def crop_image (frame):
     frame = frame[:,240:1680,:]
     frame = cv2.rotate (frame, cv2.ROTATE_90_CLOCKWISE)
@@ -85,7 +96,7 @@ def crop_image (frame):
 while (cap0.isOpened() and cap1.isOpened() and not rospy.is_shutdown ()):
     ret, frame = cap0.read ()
     if ret:
-        if (count % 120 == 0):
+        if (count % 80 == 0):
             print ("uav0: pushing")
             crop_image (frame)
             msg = ImagePose ()
@@ -97,7 +108,7 @@ while (cap0.isOpened() and cap1.isOpened() and not rospy.is_shutdown ()):
 
     ret, frame = cap1.read ()
     if ret:
-        if (count % 120 == 0):
+        if (count % 80 == 0):
             print ("uav1: pushing")
             crop_image (frame)
             msg = ImagePose ()
@@ -135,7 +146,7 @@ while (cap0.isOpened() and cap1.isOpened() and not rospy.is_shutdown ()):
         break
     '''
 
-    if len (image_pose_de) > 0 and (count % 80 == 0):
+    if len (image_pose_de) > 0 and (count % 60 == 0):
         print ("debug: publishing")
         msg = image_pose_de.popleft ()
         pub.publish (msg)
