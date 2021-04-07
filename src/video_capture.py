@@ -50,8 +50,8 @@ rospy.init_node ('video_capture')
 pub = rospy.Publisher ('/image_pose', ImagePose, queue_size=50, latch=True)
 sub = rospy.Subscriber ('mavros/global_position/local/adjusted', Odometry, cb, queue_size=10)
 
-url = "rtsp://192.168.42.129:8554/fpv_stream"
-url = rospy.get_param ("url", url)
+url = "rtsp://192.168.43.1:8554/fpv_stream"
+#url = rospy.get_param ("url", url)
 id = rospy.get_param ("id", 0)
 uav_name = "UAV" + str (id)
 

@@ -66,9 +66,13 @@ bridge = CvBridge ()
 
 if (cap0.isOpened () == False):
     print ("error in opening video stream0")
+else:
+    print ("cap0 opened")
 
 if (cap1.isOpened () == False):
     print ("error in opening video stream1")
+else:
+    print ("cap1 opened")
 
 '''
 if (cap2.isOpened () == False):
@@ -83,37 +87,51 @@ queue_len = 100
 count = 0
 tic = time.time ()
 
-rate = rospy.Rate (20)
+rate = rospy.Rate (80)
 
+'''
 while not (init0 and init1) and not rospy.is_shutdown ():
     print ("waiting for odometry")
     rate.sleep ()
+'''
 
 def crop_image (frame):
     frame = frame[:,240:1680,:]
     frame = cv2.rotate (frame, cv2.ROTATE_90_CLOCKWISE)
 
 while (cap0.isOpened() and cap1.isOpened() and not rospy.is_shutdown ()):
-    ret, frame = cap0.read ()
-    if ret:
+    ret0, frame0 = cap0.read ()
+    '''debug
+    print ("frame0 read", ret0)
+    cv2.imshow ('frame0', frame0)
+    if (cv2.waitKey (25) & 0xFF == ord ('q')):
+        break
+    '''
+    if ret0:
         if (count % 80 == 0):
             print ("uav0: pushing")
-            crop_image (frame)
+            crop_image (frame0)
             msg = ImagePose ()
             msg.pose = pose0
-            msg.image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
+            msg.image = bridge.cv2_to_imgmsg (frame0, encoding="bgr8")
             image_pose_de.append (msg)
             if len (image_pose_de) > queue_len:
                 image_pose_de.popleft ()
 
-    ret, frame = cap1.read ()
-    if ret:
+    ret1, frame1 = cap1.read ()
+    '''debug
+    print ("frame1 read", ret1)
+    cv2.imshow ('frame', frame1)
+    if (cv2.waitKey (25) & 0xFF == ord ('q')):
+        break
+    '''
+    if ret1:
         if (count % 80 == 0):
             print ("uav1: pushing")
-            crop_image (frame)
+            crop_image (frame1)
             msg = ImagePose ()
             msg.pose = pose1
-            msg.image = bridge.cv2_to_imgmsg (frame, encoding="bgr8")
+            msg.image = bridge.cv2_to_imgmsg (frame1, encoding="bgr8")
             image_pose_de.append (msg)
             if len (image_pose_de) > queue_len:
                 image_pose_de.popleft ()
@@ -152,6 +170,7 @@ while (cap0.isOpened() and cap1.isOpened() and not rospy.is_shutdown ()):
         pub.publish (msg)
 
     count += 1
+    rate.sleep ()
 
 cap0.release ()
 cap1.release ()

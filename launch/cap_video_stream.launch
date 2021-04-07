@@ -6,6 +6,8 @@
     <param name="sync" type="bool" value="false" />
     <param name="mod" type="int" value="70" />
     <node pkg="aerial_image_stitching_pkg" type="cap_video_stream.py" name="cap_video_stream" output="screen" />
-    <node pkg="aerial_image_stitching_pkg" type="geotag.py" name="geotag" output="screen" />
-    <node pkg="aerial_image_stitching_pkg" type="video_capture.py" name="video_capture" output="screen" />
+    <group ns="uav0">
+        <node pkg="aerial_image_stitching_pkg" type="geotag.py" name="geotag" output="screen" />
+        <node pkg="aerial_image_stitching_pkg" type="video_capture.py" name="video_capture" output="screen" />
+    </group>
 </launch>
